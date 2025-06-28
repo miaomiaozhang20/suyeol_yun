@@ -1,11 +1,14 @@
 # DTxDS Content Co-Creator Prototype
 
-A web-based AI system that helps early-stage founders create startup artifacts through guided conversations.
+An AI-powered interactive system that guides early-stage founders through creating and refining startup artifacts using Claude AI.
 
 ## Features Implemented
 
+✅ **AI-Powered Problem Statement Creation**: Interactive conversation with Claude AI mentor  
+✅ **Dual Mode Options**: Choose between AI conversation or guided form  
 ✅ **Problem Statement Module**: Socratic questioning to define core problems  
 ✅ **Customer Persona Module**: Create detailed customer profiles with validation warnings  
+✅ **AI Analysis & Refinement**: Get intelligent feedback and suggestions  
 ✅ **Artifact Storage**: SQLite database with Prisma ORM  
 ✅ **Artifact Management**: View, download, and delete saved artifacts  
 ✅ **Responsive UI**: Clean, modern interface with progress tracking  
@@ -17,33 +20,57 @@ A web-based AI system that helps early-stage founders create startup artifacts t
    npm install --legacy-peer-deps
    ```
 
-2. **Initialize the database:**
+2. **Set up your Anthropic API key:**
+   - Get an API key from [Anthropic Console](https://console.anthropic.com/)
+   - Add it to `.env.local`:
+   ```
+   ANTHROPIC_API_KEY=your_api_key_here
+   ```
+
+3. **Initialize the database:**
    ```bash
    npx prisma db push
    ```
 
-3. **Run the development server:**
+4. **Run the development server:**
    ```bash
    npm run dev
    ```
 
-4. **Open your browser:**
+5. **Open your browser:**
    Navigate to [http://localhost:3000](http://localhost:3000)
 
 ## How to Use
 
-1. **Start with Problem Statement** (foundational module - must complete first)
-   - Click on the Problem Statement card
-   - Answer questions about your target customer and their problems
-   - The system will ask follow-up questions based on your answers
-   - Save as draft or complete the module
+### AI-Powered Problem Statement Creation
 
-2. **Create Customer Personas** (unlocked after Problem Statement)
+1. **Choose Your Approach**
+   - Click on the Problem Statement card
+   - Select between:
+     - **AI Conversation**: Interactive chat with an AI mentor who guides you through iterations
+     - **Guided Form**: Traditional step-by-step questionnaire
+
+2. **AI Conversation Mode**
+   - Chat naturally with the AI mentor
+   - Receive personalized questions based on your responses
+   - Get real-time feedback and suggestions
+   - Iterate and refine your problem statement
+   - Save when you're satisfied with the result
+
+3. **Traditional Form Mode**
+   - Answer structured questions at your own pace
+   - Navigate back and forth between questions
+   - See dynamic follow-up questions based on your answers
+   - Save as draft or complete
+
+### Other Features
+
+1. **Create Customer Personas** (unlocked after Problem Statement)
    - Define memorable personas for your target customers
    - System warns about the importance of real user interviews
    - Supports both B2C and B2B personas
 
-3. **View Artifacts**
+2. **View Artifacts**
    - Navigate to the Artifacts page to see all saved content
    - Click on any artifact to view details
    - Download artifacts as JSON files

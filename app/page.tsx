@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { FileText, Users, ClipboardList, MessageSquare, TrendingUp, ChevronRight } from 'lucide-react';
+import { FileText, Users, ClipboardList, MessageSquare, TrendingUp, ChevronRight, Sparkles } from 'lucide-react';
 import ProblemStatementModule from './components/modules/ProblemStatementModule';
 import CustomerPersonaModule from './components/modules/CustomerPersonaModule';
+import AIProblemStatementModule from './components/modules/AIProblemStatementModule';
 
 const modules = [
   {
@@ -52,11 +53,14 @@ export default function Home() {
   const [selectedModule, setSelectedModule] = useState<string | null>(null);
   const [completedModules, setCompletedModules] = useState<string[]>([]);
   const [artifacts, setArtifacts] = useState<any[]>([]);
+  const [useAI, setUseAI] = useState(false);
+  const [showModeSelection, setShowModeSelection] = useState(false);
 
   const handleModuleComplete = (artifact: any) => {
     setArtifacts([...artifacts, artifact]);
     setCompletedModules([...completedModules, artifact.type]);
     setSelectedModule(null);
+    setUseAI(false);
   };
 
   const canAccessModule = (moduleId: string) => {
@@ -75,6 +79,16 @@ export default function Home() {
   if (selectedModule) {
     const module = modules.find(m => m.id === selectedModule);
     const ModuleComponent = module?.component;
+    
+    if (selectedModule === 'problem_statement' && useAI) {
+      return (
+        <AIProblemStatementModule
+          ventureId="demo-venture"
+          onComplete={handleModuleComplete}
+          existingArtifact={artifacts.find(a => a.type === selectedModule)}
+        />
+      );
+    }
     
     if (ModuleComponent) {
       return (
@@ -109,7 +123,15 @@ export default function Home() {
           return (
             <div
               key={module.id}
-              onClick={() => isAccessible && hasComponent && setSelectedModule(module.id)}
+              onClick={() => {
+                if (isAccessible && hasComponent) {
+                  if (module.id === 'problem_statement') {
+                    setShowModeSelection(true);
+                  } else {
+                    setSelectedModule(module.id);
+                  }
+                }
+              }}
               className={`
                 relative p-6 bg-white rounded-lg shadow-sm border-2 transition-all
                 ${isAccessible && hasComponent
@@ -171,6 +193,72 @@ export default function Home() {
             View All Artifacts
             <ChevronRight className="w-5 h-5 ml-2" />
           </a>
+        </div>
+      )}
+
+      {showModeSelection && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-2xl w-full p-6">
+            <h2 className="text-2xl font-bold mb-4">Choose Your Approach</h2>
+            <p className="text-gray-600 mb-6">
+              How would you like to create your problem statement?
+            </p>
+            
+            <div className="grid gap-4 md:grid-cols-2">
+              <button
+                onClick={() => {
+                  setUseAI(true);
+                  setSelectedModule('problem_statement');
+                  setShowModeSelection(false);
+                }}
+                className="p-6 border-2 border-gray-200 rounded-lg hover:border-blue-400 hover:shadow-md transition-all text-left"
+              >
+                <div className="flex items-start gap-3">
+                  <Sparkles className="w-8 h-8 text-purple-600 flex-shrink-0" />
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">AI Conversation</h3>
+                    <p className="text-gray-600 text-sm">
+                      Have an interactive conversation with an AI mentor who will guide you through 
+                      refining your problem statement with personalized questions and feedback.
+                    </p>
+                    <p className="text-purple-600 text-sm font-medium mt-2">
+                      Recommended for first-time founders
+                    </p>
+                  </div>
+                </div>
+              </button>
+              
+              <button
+                onClick={() => {
+                  setUseAI(false);
+                  setSelectedModule('problem_statement');
+                  setShowModeSelection(false);
+                }}
+                className="p-6 border-2 border-gray-200 rounded-lg hover:border-blue-400 hover:shadow-md transition-all text-left"
+              >
+                <div className="flex items-start gap-3">
+                  <FileText className="w-8 h-8 text-blue-600 flex-shrink-0" />
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">Guided Form</h3>
+                    <p className="text-gray-600 text-sm">
+                      Answer a structured set of questions at your own pace with the ability to 
+                      go back and forth between questions.
+                    </p>
+                    <p className="text-blue-600 text-sm font-medium mt-2">
+                      Quick and straightforward
+                    </p>
+                  </div>
+                </div>
+              </button>
+            </div>
+            
+            <button
+              onClick={() => setShowModeSelection(false)}
+              className="mt-6 w-full py-2 text-gray-600 hover:text-gray-800"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       )}
     </div>
