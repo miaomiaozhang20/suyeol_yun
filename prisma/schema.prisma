@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  name      String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  ventures  Venture[]
+  artifacts Artifact[]
+}
+
+model Venture {
+  id          String    @id @default(cuid())
+  name        String
+  type        String?   // SaaS, hardware, service
+  industry    String?
+  country     String?
+  description String?
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  artifacts   Artifact[]
+}
+
+model Artifact {
+  id              String    @id @default(cuid())
+  type            String    // problem_statement, customer_persona, interview_guide, etc.
+  status          String    @default("draft") // draft, complete
+  content         String    // JSON content
+  conversationLog String?   // JSON log of Q&A
+  moduleId        String    // problem, solution, product, etc.
+  isFoundational  Boolean   @default(false)
+  
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+  ventureId       String
+  venture         Venture   @relation(fields: [ventureId], references: [id])
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([userId, ventureId])
+  @@index([type, status])
+}
